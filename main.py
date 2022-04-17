@@ -1,42 +1,24 @@
 import json
 
-from flask import Flask
+from apps import get_all_candidates, get_candidate_id, get_candidate_skills
 
-with open("candidates.json", 'r', encoding='utf-8') as file:
-    candidates_list = json.load(file)
+from flask import Flask
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def main_page():
-    result = '<pre>\n'
-    for candidate in candidates_list:
-        result += f'Имя кандидата - {candidate["name"]}\nПозиция кандидата - {candidate["position"]}\nНавыки через запятую - {candidate["skills"]}\n\n'
-    result += '<pre>'
-    return result
-
+    return get_all_candidates()
 
 @app.route("/candidates/<int:id>")
 def candidate(id):
-    for candidate in candidates_list:
-        if candidate["id"] == id:
-            result = f'<img src = {candidate["picture"]}\n\n>'
-            result += '<pre>\n'
-            result += f'Имя кандидата - {candidate["name"]}\nПозиция кандидата - {candidate["position"]}\nНавыки через запятую - {candidate["skills"]}\n\n'
-            result += '<pre>'
-            return result
+    return get_candidate_id(id)
 
 
 @app.route("/skills/<skill>")
 def skill(skill):
-    result = '<pre>\n'
-    for candidate in candidates_list:
-        list = candidate["skills"].lower().split(", ")
-        if skill in list:
-            result += f'Имя кандидата - {candidate["name"]}\nПозиция кандидата - {candidate["position"]}\nНавыки через запятую - {candidate["skills"]}\n\n'
-    result += '<pre>\n'
-    return result
+    return get_candidate_skills(skill)
 
 
 app.run()
